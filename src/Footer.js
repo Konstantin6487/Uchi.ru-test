@@ -18,24 +18,38 @@ const Button = styled.span`
 `;
 
 const Footer = ({ className }) => (
-  <footer className={className}>
-    <Button>Today</Button>
-    <Button>Delete</Button>
-  </footer>
+  <div className={className}>
+    <Wrapper>
+      <Foo>
+        <Button>Today</Button>
+        <Button>Delete</Button>
+      </Foo>
+    </Wrapper>
+  </div>
 );
 
 Footer.propTypes = {
   className: string.isRequired,
 };
 
-const StyledFooter = styled(Footer)`
+const Wrapper = styled.div`
+  max-width: 988px;
+  margin: 0 auto;
+`;
+
+const Foo = styled.footer`
   display: flex;
   flex-basis: 100%;
   justify-content: space-between;
   align-items: center;
   font-size: 25px;
   font-weight: lighter;
-  padding: 20px 45px 20px 45px;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
+
+const StyledFooter = styled(Footer)`
+  padding: 20px 0 20px 0;
   background: #f3f3f3;
 `;
 

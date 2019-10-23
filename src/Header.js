@@ -23,6 +23,11 @@ const Title = styled.h1`
   font-weight: lighter;
 `;
 
+const Wrapper = styled.div`
+  max-width: 988px;
+  margin: 0 auto;
+`;
+
 const Header = ({ className }) => (
   <header className={className}>
     <Title>Interview Calendar</Title>
@@ -41,7 +46,7 @@ const StyledHeader = styled(Header)`
   align-items: center;
   font-size: 30px;
   font-weight: lighter;
-  padding: 20px 45px 20px 45px;
+  padding: 20px 50px 20px 50px;
 `;
 
-export default StyledHeader;
+export default () => <Wrapper><StyledHeader /></Wrapper>;

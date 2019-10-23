@@ -21,6 +21,12 @@ const CellInner = styled.div`
   };
 `;
 
+const CellEmpty = styled(Cell)`
+  border: none;
+  align-items: flex-end;
+  justify-content: right;
+`;
+
 const Row = styled.div`
   display: flex;
   flex-basis: 100%;
@@ -36,6 +42,7 @@ const Schedule = ({ className }) => (
   <section className={className}>
     <Wrapper>
       <Row>
+        <CellEmpty>09:00</CellEmpty>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
@@ -45,6 +52,7 @@ const Schedule = ({ className }) => (
         <Cell><CellInner /></Cell>
       </Row>
       <Row>
+        <CellEmpty>09:00</CellEmpty>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
@@ -54,6 +62,7 @@ const Schedule = ({ className }) => (
         <Cell><CellInner /></Cell>
       </Row>
       <Row>
+        <CellEmpty>09:00</CellEmpty>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
@@ -63,6 +72,7 @@ const Schedule = ({ className }) => (
         <Cell><CellInner /></Cell>
       </Row>
       <Row>
+        <CellEmpty>09:00</CellEmpty>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
@@ -72,6 +82,37 @@ const Schedule = ({ className }) => (
         <Cell><CellInner /></Cell>
       </Row>
       <Row>
+        <CellEmpty>09:00</CellEmpty>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+      </Row>
+      <Row>
+        <CellEmpty>09:00</CellEmpty>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+      </Row>
+      <Row>
+        <CellEmpty>09:00</CellEmpty>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+        <Cell><CellInner /></Cell>
+      </Row>
+      <Row>
+        <CellEmpty>09:00</CellEmpty>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
         <Cell><CellInner /></Cell>
@@ -89,6 +130,8 @@ Schedule.propTypes = {
 };
 
 const StyledSchedule = styled(Schedule)`
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 export default StyledSchedule;

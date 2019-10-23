@@ -37,6 +37,7 @@ const FlexData = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 15%;
 `;
 
 const DateCarousel = styled.div`
@@ -44,13 +45,14 @@ const DateCarousel = styled.div`
   justify-content: space-between;
   font-size: 20px;
   align-items: center;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-left: 17%;
+  padding-right: 4%;
 `;
 
 const Arrow = styled.span`
   cursor: pointer;
   user-select: none;
+  color: red;
   &:hover {
     color: #9555af;
   };
@@ -71,6 +73,7 @@ const CarouselDays = ({ className }) => (
   <div className={className}>
     <Wrapper>
       <WeekDaysWrapper>
+        <FlexData />
         <FlexData>
           <WeekDayLetter>m</WeekDayLetter>
           <WeekDayDigit>25</WeekDayDigit>
