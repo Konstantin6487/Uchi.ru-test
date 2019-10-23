@@ -8,8 +8,6 @@ import Carousel from './Carousel';
 import Schedule from './Schedule';
 import Footer from './Footer';
 
-
-
 const App = ({ className }) => (
   <div className={className}>
     <Header />
