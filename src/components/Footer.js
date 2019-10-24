@@ -3,6 +3,7 @@ import { string, func, object } from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { isEmpty, throttle } from 'lodash';
+import Wrapper from './Wrapper';
 import { selectEventCellSelector, getActiveDay } from '../selectors';
 import { reset, removeEvent } from '../actions';
 import { formatDateToUsa } from '../helpers';
@@ -65,11 +66,6 @@ Footer.propTypes = {
   removeEvent: func.isRequired,
   reset: func.isRequired,
 };
-
-const Wrapper = styled.div`
-  max-width: 988px;
-  margin: 0 auto;
-`;
 
 const FlexWrap = styled.footer`
   display: flex;

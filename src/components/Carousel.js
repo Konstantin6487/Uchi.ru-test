@@ -8,6 +8,7 @@ import {
 import { connect } from 'react-redux';
 import { throttle } from 'lodash';
 import styled from 'styled-components';
+import Wrapper from './Wrapper';
 import { changeNextDay, changePrevDay, changeDay } from '../actions';
 import { getActiveDay } from '../selectors';
 import { parseDateFromUsa, formatDatePretty } from '../helpers';
@@ -100,7 +101,7 @@ const StyledDateCarousel = styled(ConnectedDateCarousel)`
   justify-content: space-between;
   font-size: 20px;
   align-items: center;
-  padding-left: 17%;
+  padding-left: 16%;
   padding-right: 4%;
 `;
 
@@ -117,11 +118,6 @@ const Arrow = styled.span`
   };
   margin-left: ${({ left }) => left && '10px'};
   margin-right: ${({ right }) => right && '10px'};
-`;
-
-const Wrapper = styled.div`
-  margin: 0 auto;
-  max-width: 988px;
 `;
 
 const CarouselDays = ({

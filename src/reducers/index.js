@@ -1,6 +1,6 @@
 import { createReducer } from 'redux-starter-kit';
 import { addDays } from 'date-fns';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import {
   changeNextDay,
   changePrevDay,
@@ -50,7 +50,7 @@ const schedule = createReducer(initialStateData.schedule, {
     if (isEmpty(payload)) {
       return state;
     }
-    return ({
+    const updatedSchedule = ({
       listByDate: {
         ...state.listByDate,
         [payload.date]: {
@@ -59,6 +59,13 @@ const schedule = createReducer(initialStateData.schedule, {
         },
       },
     });
+
+    const updatedDateSchedule = updatedSchedule.listByDate[payload.date];
+
+    if (Object.values(updatedDateSchedule).every((value) => value === false)) {
+      return ({ listByDate: omit(updatedSchedule.listByDate, payload.date) });
+    }
+    return updatedSchedule;
   },
 });
 

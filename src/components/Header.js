@@ -1,6 +1,7 @@
 import React from 'react';
 import { string } from 'prop-types';
 import styled from 'styled-components';
+import Wrapper from './Wrapper';
 
 const Plus = styled.span`
   color: red;
@@ -21,11 +22,6 @@ const Plus = styled.span`
 const Title = styled.h1`
   font-size: inherit;
   font-weight: lighter;
-`;
-
-const Wrapper = styled.div`
-  max-width: 988px;
-  margin: 0 auto;
 `;
 
 const Header = ({ className }) => (

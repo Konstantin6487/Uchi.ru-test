@@ -8,6 +8,7 @@ import {
   func,
 } from 'prop-types';
 import { get } from 'lodash';
+import Wrapper from './Wrapper';
 import { addEvent, selectEventCell } from '../actions';
 import { listByDateSelector, selectEventCellSelector } from '../selectors';
 
@@ -49,11 +50,6 @@ const HourMark = styled.span`
   position: absolute;
   right: 5%;
   top: 82%;
-`;
-
-const Wrapper = styled.div`
-  max-width: 988px;
-  margin: 0 auto;
 `;
 
 const Schedule = ({
