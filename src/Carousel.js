@@ -1,9 +1,20 @@
 import React from 'react';
-import { string } from 'prop-types';
+import {
+  string,
+  func,
+  arrayOf,
+  object,
+} from 'prop-types';
 import { connect } from 'react-redux';
-import { format, parse } from 'date-fns';
-
+import {
+  format,
+  parse,
+  startOfWeek,
+  addDays,
+} from 'date-fns';
+import { throttle } from 'lodash';
 import styled from 'styled-components';
+import { addDay, removeDay, setDay } from './reducers';
 
 const WeekDaysWrapper = styled.div`
   display: flex;
@@ -24,11 +35,8 @@ const WeekDayDigit = styled.div`
   cursor: pointer;
   user-select: none;
   padding: 5px;
-  &:hover {
-    color: #fff;
-    background: red;
-    border-radius: 50%;
-  };
+  background: ${({ isCurrentDay }) => isCurrentDay && 'red'};
+  border-radius: ${({ isCurrentDay }) => isCurrentDay && '50%'};
   &:active,
   &:focus {
     transform: translateY(1px);
@@ -42,30 +50,45 @@ const FlexData = styled.div`
   width: 15%;
 `;
 
-const DateCarousel = ({ day, className }) => (
-  <div className={className}>
-    <Arrow left>❮</Arrow>
-    <span>{day}</span>
-    <Arrow right>❯</Arrow>
-  </div>
-);
+const DateCarousel = ({
+  day,
+  className,
+  addDay: setNextDay,
+  removeDay: setPrevDay,
+}) => {
+  const handleClickLeft = throttle((e) => {
+    e.persist();
+    setPrevDay();
+  }, 100);
 
-// const DateCarousel = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   font-size: 20px;
-//   align-items: center;
-//   padding-left: 17%;
-//   padding-right: 4%;
-// `;
+  const handleClickRight = throttle((e) => {
+    e.persist();
+    setNextDay();
+  }, 100);
+
+  return (
+    <div className={className}>
+      <Arrow left onClick={handleClickLeft}>❮</Arrow>
+      <span>{day}</span>
+      <Arrow right onClick={handleClickRight}>❯</Arrow>
+    </div>
+  );
+};
+
+DateCarousel.propTypes = {
+  className: string.isRequired,
+  addDay: func.isRequired,
+  removeDay: func.isRequired,
+  day: string.isRequired,
+};
 
 const ConnectedDateCarousel = connect(({ day }) => {
   const parsed = parse(day, 'M-d-yyyy', new Date());
-  const formatted = format(parsed, 'EEEE d MMMM yyyy');
+  const formatted = format(parsed, 'EEEE d MMMM yyyy', { timeZone: 'Europe/Moscow' });
   return ({
     day: formatted,
   });
-})(DateCarousel);
+}, { addDay, removeDay, setDay })(DateCarousel);
 
 const StyledDateCarousel = styled(ConnectedDateCarousel)`
   display: flex;
@@ -96,54 +119,67 @@ const Wrapper = styled.div`
   max-width: 988px;
 `;
 
-const CarouselDays = (props) => (
-  <div className={props.className}>
-    <Wrapper>
-      <WeekDaysWrapper>
-        <FlexData />
-        <FlexData>
-          <WeekDayLetter>m</WeekDayLetter>
-          <WeekDayDigit>25</WeekDayDigit>
-        </FlexData>
-        <FlexData>
-          <WeekDayLetter>t</WeekDayLetter>
-          <WeekDayDigit>26</WeekDayDigit>
-        </FlexData>
-        <FlexData>
-          <WeekDayLetter>w</WeekDayLetter>
-          <WeekDayDigit>27</WeekDayDigit>
-        </FlexData>
-        <FlexData>
-          <WeekDayLetter>t</WeekDayLetter>
-          <WeekDayDigit>28</WeekDayDigit>
-        </FlexData>
-        <FlexData>
-          <WeekDayLetter>f</WeekDayLetter>
-          <WeekDayDigit>28</WeekDayDigit>
-        </FlexData>
-        <FlexData>
-          <WeekDayLetter>s</WeekDayLetter>
-          <WeekDayDigit>30</WeekDayDigit>
-        </FlexData>
-        <FlexData>
-          <WeekDayLetter>s</WeekDayLetter>
-          <WeekDayDigit>26</WeekDayDigit>
-        </FlexData>
-      </WeekDaysWrapper>
-      <StyledDateCarousel>
-        <Arrow left>❮</Arrow>
-        <span>Wednesday 27 March 2019</span>
-        <Arrow right>❯</Arrow>
-      </StyledDateCarousel>
-    </Wrapper>
-  </div>
-);
+const CarouselDays = ({
+  className,
+  setDay: setSelectedDay,
+  day,
+  weekDays,
+}) => {
+
+  const renderWeekDays = () => (
+    weekDays.map(({ date, dayName, dayNum }) => (
+      <FlexData key={date}>
+        <WeekDayLetter>{dayName.toLowerCase()}</WeekDayLetter>
+        <WeekDayDigit onClick={() => setSelectedDay(date)} isCurrentDay={date === day}>
+          {dayNum}
+        </WeekDayDigit>
+      </FlexData>
+    ))
+  );
+
+  return (
+    <div className={className}>
+      <Wrapper>
+        <WeekDaysWrapper>
+          <FlexData />
+          {renderWeekDays()}
+        </WeekDaysWrapper>
+        <StyledDateCarousel>
+          <Arrow left>❮</Arrow>
+          <span>Wednesday 27 March 2019</span>
+          <Arrow right>❯</Arrow>
+        </StyledDateCarousel>
+      </Wrapper>
+    </div>
+  );
+};
 
 CarouselDays.propTypes = {
   className: string.isRequired,
+  setDay: func.isRequired,
+  day: string.isRequired,
+  weekDays: arrayOf(object).isRequired,
 };
 
-const StyledCarouselDays = styled(CarouselDays)`
+const ConnectedCarouselDays = connect(({ day }) => {
+  const parsed = parse(day, 'M-d-yyyy', new Date());
+  const weekStart = startOfWeek(parsed, { weekStartsOn: 1 });
+
+  const weekDays = Array
+    .from({ length: 7 }, (_, i) => addDays(weekStart, i))
+    .map((_day) => ({
+      date: format(_day, 'M-d-yyyy', { timeZone: 'Europe/Moscow' }),
+      dayNum: format(_day, 'd', { timeZone: 'Europe/Moscow' }),
+      dayName: format(_day, 'EEEEE', { timeZone: 'Europe/Moscow' }),
+    }));
+
+  return ({
+    day,
+    weekDays,
+  });
+}, { setDay })(CarouselDays);
+
+const StyledCarouselDays = styled(ConnectedCarouselDays)`
   background: #f3f3f3;
   padding-top: 15px;
   padding-bottom: 15px;

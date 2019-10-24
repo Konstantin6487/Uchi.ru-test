@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { configureStore } from 'redux-starter-kit';
+import {
+  configureStore,
+  getDefaultMiddleware,
+} from 'redux-starter-kit';
 import { Provider } from 'react-redux';
 import App from './App';
 import reducer from './reducers';
@@ -8,9 +11,10 @@ import reducer from './reducers';
 const store = configureStore({
   reducer,
   devTools: process.env.NODE_ENV !== 'production',
+  middleware: getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 });
-
-// store.dispatch(add());
 
 ReactDOM.render(
   <Provider store={store}>

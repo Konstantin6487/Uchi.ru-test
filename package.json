@@ -15,7 +15,8 @@
     "react-scripts": "3.2.0",
     "redux": "^4.0.4",
     "redux-starter-kit": "^1.0.0",
-    "styled-components": "^4.4.0"
+    "styled-components": "^4.4.0",
+    "timezone-support": "^2.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
