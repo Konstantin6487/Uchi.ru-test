@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { configureStore } from 'redux-starter-kit';
 import { Provider } from 'react-redux';
 import App from './App';
+import reducer from './reducers';
 
-/* eslint-disable no-underscore-dangle */
-const store = createStore(
-  () => [],
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-);
-/* eslint-enable */
+const store = configureStore({
+  reducer,
+  devTools: process.env.NODE_ENV !== 'production',
+});
+
+// store.dispatch(add());
 
 ReactDOM.render(
   <Provider store={store}>

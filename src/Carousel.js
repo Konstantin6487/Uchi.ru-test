@@ -1,5 +1,7 @@
 import React from 'react';
 import { string } from 'prop-types';
+import { connect } from 'react-redux';
+import { format, parse } from 'date-fns';
 
 import styled from 'styled-components';
 
@@ -40,7 +42,32 @@ const FlexData = styled.div`
   width: 15%;
 `;
 
-const DateCarousel = styled.div`
+const DateCarousel = ({ day, className }) => (
+  <div className={className}>
+    <Arrow left>❮</Arrow>
+    <span>{day}</span>
+    <Arrow right>❯</Arrow>
+  </div>
+);
+
+// const DateCarousel = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   font-size: 20px;
+//   align-items: center;
+//   padding-left: 17%;
+//   padding-right: 4%;
+// `;
+
+const ConnectedDateCarousel = connect(({ day }) => {
+  const parsed = parse(day, 'M-d-yyyy', new Date());
+  const formatted = format(parsed, 'EEEE d MMMM yyyy');
+  return ({
+    day: formatted,
+  });
+})(DateCarousel);
+
+const StyledDateCarousel = styled(ConnectedDateCarousel)`
   display: flex;
   justify-content: space-between;
   font-size: 20px;
@@ -69,8 +96,8 @@ const Wrapper = styled.div`
   max-width: 988px;
 `;
 
-const CarouselDays = ({ className }) => (
-  <div className={className}>
+const CarouselDays = (props) => (
+  <div className={props.className}>
     <Wrapper>
       <WeekDaysWrapper>
         <FlexData />
@@ -103,11 +130,11 @@ const CarouselDays = ({ className }) => (
           <WeekDayDigit>26</WeekDayDigit>
         </FlexData>
       </WeekDaysWrapper>
-      <DateCarousel>
+      <StyledDateCarousel>
         <Arrow left>❮</Arrow>
         <span>Wednesday 27 March 2019</span>
         <Arrow right>❯</Arrow>
-      </DateCarousel>
+      </StyledDateCarousel>
     </Wrapper>
   </div>
 );
@@ -123,8 +150,10 @@ const StyledCarouselDays = styled(CarouselDays)`
   box-shadow: 0 -2px 5px -5px #333;
 `;
 
-export default () => (
+const Carousel = () => (
   <main>
     <StyledCarouselDays />
   </main>
 );
+
+export default Carousel;
