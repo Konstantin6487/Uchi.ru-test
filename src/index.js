@@ -6,7 +6,7 @@ import {
   getDefaultMiddleware,
 } from 'redux-starter-kit';
 import App from './components/App';
-import reducer from './reducers';
+import reducer, { addEvent } from './reducers';
 
 const store = configureStore({
   reducer,
@@ -15,6 +15,8 @@ const store = configureStore({
     serializableCheck: false,
   }),
 });
+
+store.dispatch(addEvent({ date: '10-24-2019', hour: '23' }));
 
 render(
   <Provider store={store}>

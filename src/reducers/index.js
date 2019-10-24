@@ -25,9 +25,35 @@ const day = createReducer(initialState, {
   [setDay]: (_, { payload }) => payload,
 });
 
+export const addEvent = createAction('schedule/EVENT_ADD');
+const removeEvent = createAction('schedule/EVENT_REMOVE');
 
-const reducer = {
+const schedule = createReducer({ listByDate: {} }, {
+  [addEvent]: (state, { payload }) => {
+    return {
+      listByDate: {
+        ...state.listByDate,
+        [payload.date]: {
+          ...state.listByDate[payload.date],
+          [payload.hour]: true,
+        },
+      },
+    };
+  },
+  [removeEvent]: (state, action) => state,
+});
+
+export const selectEventCell = createAction('ui/EVENT_SELECT_CELL');
+export const cancelSelectEventCell = createAction('ui/EVENT_SELECT_CANCEL');
+
+const ui = createReducer({ selectedEventCell: '' }, {
+  [selectEventCell]: (_, action) => ({ selectedEventCell: action.payload }),
+  [cancelSelectEventCell]: () => ({ selectedEventCell: '' }),
+  [addEvent]: () => ({ selectedEventCell: '' }),
+});
+
+export default {
   day,
+  schedule,
+  ui,
 };
-
-export default reducer;

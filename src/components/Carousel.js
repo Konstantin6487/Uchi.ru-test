@@ -15,6 +15,7 @@ import {
 import { throttle } from 'lodash';
 import styled from 'styled-components';
 import { addDay, removeDay, setDay } from '../reducers';
+import { getSelectedDay } from '../selectors';
 
 const WeekDaysWrapper = styled.div`
   display: flex;
@@ -36,6 +37,7 @@ const WeekDayDigit = styled.div`
   user-select: none;
   padding: 5px;
   background: ${({ isCurrentDay }) => isCurrentDay && 'red'};
+  color: ${({ isCurrentDay }) => isCurrentDay && '#fff'};
   border-radius: ${({ isCurrentDay }) => isCurrentDay && '50%'};
   &:active,
   &:focus {
@@ -160,23 +162,10 @@ CarouselDays.propTypes = {
   weekDays: arrayOf(object).isRequired,
 };
 
-const ConnectedCarouselDays = connect(({ day }) => {
-  const parsed = parse(day, 'M-d-yyyy', new Date());
-  const weekStart = startOfWeek(parsed, { weekStartsOn: 1 });
-
-  const weekDays = Array
-    .from({ length: 7 }, (_, i) => addDays(weekStart, i))
-    .map((_day) => ({
-      date: format(_day, 'M-d-yyyy', { timeZone: 'Europe/Moscow' }),
-      dayNum: format(_day, 'd', { timeZone: 'Europe/Moscow' }),
-      dayName: format(_day, 'EEEEE', { timeZone: 'Europe/Moscow' }),
-    }));
-
-  return ({
-    day,
-    weekDays,
-  });
-}, { setDay })(CarouselDays);
+const ConnectedCarouselDays = connect(
+  (state) => ({ day: getSelectedDay(state) }),
+  { setDay },
+)(CarouselDays);
 
 const StyledCarouselDays = styled(ConnectedCarouselDays)`
   background: #f3f3f3;
@@ -185,9 +174,9 @@ const StyledCarouselDays = styled(ConnectedCarouselDays)`
   box-shadow: 0 -2px 5px -5px #333;
 `;
 
-const Carousel = () => (
+const Carousel = ({ weekDays }) => (
   <main>
-    <StyledCarouselDays />
+    <StyledCarouselDays weekDays={weekDays} />
   </main>
 );
 

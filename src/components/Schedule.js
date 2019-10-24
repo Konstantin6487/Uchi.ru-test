@@ -1,7 +1,15 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { string } from 'prop-types';
+import {
+  string,
+  arrayOf,
+  object,
+  func,
+} from 'prop-types';
+import { get } from 'lodash';
+import { addEvent, selectEventCell } from '../reducers';
+import { listByDateSelector, selectEventCellSelector } from '../selectors';
 
 const Cell = styled.div`
   width: 15%;
@@ -15,6 +23,9 @@ const Cell = styled.div`
 `;
 
 const CellInner = styled.div`
+  background: ${({ hasEvent }) => hasEvent && 'lightgray'};
+  background: ${({ isSelected }) => isSelected && 'blue'};
+  
   flex-basis: 100%;
   &:hover {
     background: gray;
@@ -38,98 +49,65 @@ const Wrapper = styled.div`
   margin: 0 auto;
 `;
 
-const Schedule = ({ className }) => (
-  <section className={className}>
-    <Wrapper>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
+const Schedule = ({ className, weekDays, addEvent, selectEventCell, selectedEventCell, listByDate }) => {
+  const dayHoursList = Array.from({ length: 24 }, (_, i) => (i < 10 ? `0${i}:00` : `${i}:00`));
+
+  const hasEventOnDate = (date, hour) => !!get(listByDate, [`${date}`, `${hour}`]);
+  const isSelectedCell = ({ date: cellDate, hour: cellHour }) => {
+    const { date, hour } = selectedEventCell;
+    return date === cellDate && hour === cellHour;
+  };
+  const addEventToDate = (data) => () => addEvent(data);
+  const selectCellWithEvent = (eventData) => () => selectEventCell(eventData);
+
+  const renderWeekScheduleRow = (hour) => (
+    weekDays.map(({ date }) => {
+      const hasEvent = hasEventOnDate(date, hour);
+      return (
+        <Cell key={`${date}-${hour}`}>
+          <CellInner
+            onClick={!hasEvent
+              ? addEventToDate({ date, hour })
+              : selectCellWithEvent({ date, hour })}
+            hasEvent={hasEvent}
+            isSelected={isSelectedCell({ date, hour })}
+          />
+        </Cell>
+      );
+    })
+  );
+
+  const renderWeekScheduleColumn = () => (
+    dayHoursList.map((hour, i) => (
+      <Row key={hour}>
+        <CellEmpty>{hour}</CellEmpty>
+        {renderWeekScheduleRow(i)}
       </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-      <Row>
-        <CellEmpty>09:00</CellEmpty>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-        <Cell><CellInner /></Cell>
-      </Row>
-    </Wrapper>
-  </section>
-);
+    ))
+  );
+
+  return (
+    <section className={className}>
+      <Wrapper>
+        {renderWeekScheduleColumn()}
+      </Wrapper>
+    </section>
+  );
+};
 
 Schedule.propTypes = {
   className: string.isRequired,
+  weekDays: arrayOf(object).isRequired,
+  addEvent: func.isRequired,
+  selectEventCell: func.isRequired,
 };
 
-const StyledSchedule = styled(Schedule)`
+const ConnectedShedule = connect((state) => ({
+  listByDate: listByDateSelector(state),
+  selectedEventCell: selectEventCellSelector(state),
+}), { addEvent, selectEventCell })(Schedule);
+
+const StyledSchedule = styled(ConnectedShedule)`
   margin-top: 20px;
   margin-bottom: 20px;
 `;
