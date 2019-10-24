@@ -1,59 +1,59 @@
-import { createAction, createReducer } from 'redux-starter-kit';
-import { addDays, format, parse } from 'date-fns';
+import { createReducer } from 'redux-starter-kit';
+import { addDays } from 'date-fns';
+import {
+  changeNextDay,
+  changePrevDay,
+  changeDay,
+  addEvent,
+  removeEvent,
+  selectEventCell,
+  cancelSelectEventCell,
+} from '../actions';
+import { formatDateToUsa, parseDateFromUsa } from '../helpers';
 
-export const addDay = createAction('day/ADD_DAY');
-export const removeDay = createAction('day/REMOVE_DAY');
-export const setDay = createAction('day/SET_DAY');
+const initialStateData = {
+  activeDay: formatDateToUsa(new Date()),
+  schedule: ({ listByDate: {} }),
+  ui: ({ selectedCellEventData: {} }),
+};
 
-const initialState = format(new Date(), 'M-d-yyyy', { timeZone: 'Europe/Moscow' });
-
-const day = createReducer(initialState, {
-  [addDay]: (state) => {
-    const parsed = parse(state, 'M-d-yyyy', new Date());
+const activeDay = createReducer(initialStateData.activeDay, {
+  [changeNextDay]: (state) => {
+    const parsed = parseDateFromUsa(state);
     const formatted = addDays(parsed, 1);
-    const normalized = format(formatted, 'M-d-yyyy', { timeZone: 'Europe/Moscow' });
-
+    const normalized = formatDateToUsa(formatted);
     return normalized;
   },
-  [removeDay]: (state) => {
-    const parsed = parse(state, 'M-d-yyyy', new Date());
+  [changePrevDay]: (state) => {
+    const parsed = parseDateFromUsa(state);
     const formatted = addDays(parsed, -1);
-    const normalized = format(formatted, 'M-d-yyyy', { timeZone: 'Europe/Moscow' });
-
+    const normalized = formatDateToUsa(formatted);
     return normalized;
   },
-  [setDay]: (_, { payload }) => payload,
+  [changeDay]: (_, { payload }) => payload,
 });
 
-export const addEvent = createAction('schedule/EVENT_ADD');
-const removeEvent = createAction('schedule/EVENT_REMOVE');
-
-const schedule = createReducer({ listByDate: {} }, {
-  [addEvent]: (state, { payload }) => {
-    return {
-      listByDate: {
-        ...state.listByDate,
-        [payload.date]: {
-          ...state.listByDate[payload.date],
-          [payload.hour]: true,
-        },
+const schedule = createReducer(initialStateData.schedule, {
+  [addEvent]: (state, { payload }) => ({
+    listByDate: {
+      ...state.listByDate,
+      [payload.date]: {
+        ...state.listByDate[payload.date],
+        [payload.hour]: true,
       },
-    };
-  },
-  [removeEvent]: (state, action) => state,
+    },
+  }),
+  [removeEvent]: (state) => state,
 });
 
-export const selectEventCell = createAction('ui/EVENT_SELECT_CELL');
-export const cancelSelectEventCell = createAction('ui/EVENT_SELECT_CANCEL');
-
-const ui = createReducer({ selectedEventCell: '' }, {
-  [selectEventCell]: (_, action) => ({ selectedEventCell: action.payload }),
-  [cancelSelectEventCell]: () => ({ selectedEventCell: '' }),
-  [addEvent]: () => ({ selectedEventCell: '' }),
+const ui = createReducer(initialStateData.ui, {
+  [selectEventCell]: (_, { payload }) => ({ selectedCellEventData: payload }),
+  [cancelSelectEventCell]: () => initialStateData.ui,
+  [addEvent]: () => initialStateData.ui,
 });
 
 export default {
-  day,
+  activeDay,
   schedule,
   ui,
 };

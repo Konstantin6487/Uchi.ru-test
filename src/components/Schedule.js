@@ -8,7 +8,7 @@ import {
   func,
 } from 'prop-types';
 import { get } from 'lodash';
-import { addEvent, selectEventCell } from '../reducers';
+import { addEvent, selectEventCell } from '../actions';
 import { listByDateSelector, selectEventCellSelector } from '../selectors';
 
 const Cell = styled.div`
@@ -25,7 +25,6 @@ const Cell = styled.div`
 const CellInner = styled.div`
   background: ${({ hasEvent }) => hasEvent && 'lightgray'};
   background: ${({ isSelected }) => isSelected && 'blue'};
-  
   flex-basis: 100%;
   &:hover {
     background: gray;
@@ -49,13 +48,20 @@ const Wrapper = styled.div`
   margin: 0 auto;
 `;
 
-const Schedule = ({ className, weekDays, addEvent, selectEventCell, selectedEventCell, listByDate }) => {
+const Schedule = ({
+  className,
+  weekDays,
+  addEvent,
+  selectEventCell,
+  selectedCellEventData,
+  listByDate,
+}) => {
   const dayHoursList = Array.from({ length: 24 }, (_, i) => (i < 10 ? `0${i}:00` : `${i}:00`));
 
   const hasEventOnDate = (date, hour) => !!get(listByDate, [`${date}`, `${hour}`]);
   const isSelectedCell = ({ date: cellDate, hour: cellHour }) => {
-    const { date, hour } = selectedEventCell;
-    return date === cellDate && hour === cellHour;
+    const { date: eventDate, hour: eventHour } = selectedCellEventData;
+    return eventDate === cellDate && eventHour === cellHour;
   };
   const addEventToDate = (data) => () => addEvent(data);
   const selectCellWithEvent = (eventData) => () => selectEventCell(eventData);
@@ -104,7 +110,7 @@ Schedule.propTypes = {
 
 const ConnectedShedule = connect((state) => ({
   listByDate: listByDateSelector(state),
-  selectedEventCell: selectEventCellSelector(state),
+  selectedCellEventData: selectEventCellSelector(state),
 }), { addEvent, selectEventCell })(Schedule);
 
 const StyledSchedule = styled(ConnectedShedule)`

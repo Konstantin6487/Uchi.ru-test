@@ -6,16 +6,11 @@ import {
   object,
 } from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  format,
-  parse,
-  startOfWeek,
-  addDays,
-} from 'date-fns';
 import { throttle } from 'lodash';
 import styled from 'styled-components';
-import { addDay, removeDay, setDay } from '../reducers';
-import { getSelectedDay } from '../selectors';
+import { changeNextDay, changePrevDay, changeDay } from '../actions';
+import { getActiveDay } from '../selectors';
+import { parseDateFromUsa, formatDatePretty } from '../helpers';
 
 const WeekDaysWrapper = styled.div`
   display: flex;
@@ -53,10 +48,10 @@ const FlexData = styled.div`
 `;
 
 const DateCarousel = ({
-  day,
+  activeDay,
   className,
-  addDay: setNextDay,
-  removeDay: setPrevDay,
+  changeNextDay: setNextDay,
+  changePrevDay: setPrevDay,
 }) => {
   const handleClickLeft = throttle((e) => {
     e.persist();
@@ -71,7 +66,7 @@ const DateCarousel = ({
   return (
     <div className={className}>
       <Arrow left onClick={handleClickLeft}>❮</Arrow>
-      <span>{day}</span>
+      <span>{activeDay}</span>
       <Arrow right onClick={handleClickRight}>❯</Arrow>
     </div>
   );
@@ -79,18 +74,20 @@ const DateCarousel = ({
 
 DateCarousel.propTypes = {
   className: string.isRequired,
-  addDay: func.isRequired,
-  removeDay: func.isRequired,
-  day: string.isRequired,
+  changeNextDay: func.isRequired,
+  changePrevDay: func.isRequired,
+  activeDay: string.isRequired,
 };
 
-const ConnectedDateCarousel = connect(({ day }) => {
-  const parsed = parse(day, 'M-d-yyyy', new Date());
-  const formatted = format(parsed, 'EEEE d MMMM yyyy', { timeZone: 'Europe/Moscow' });
+const ConnectedDateCarousel = connect((state) => {
+  const activeDay = getActiveDay(state);
+  const parsed = parseDateFromUsa(activeDay);
+  const formatted = formatDatePretty(parsed);
+
   return ({
-    day: formatted,
+    activeDay: formatted,
   });
-}, { addDay, removeDay, setDay })(DateCarousel);
+}, { changeNextDay, changePrevDay, changeDay })(DateCarousel);
 
 const StyledDateCarousel = styled(ConnectedDateCarousel)`
   display: flex;
@@ -123,15 +120,15 @@ const Wrapper = styled.div`
 
 const CarouselDays = ({
   className,
-  setDay: setSelectedDay,
-  day,
+  changeDay: setSelectedDay,
+  activeDay,
   weekDays,
 }) => {
   const renderWeekDays = () => (
     weekDays.map(({ date, dayName, dayNum }) => (
       <FlexData key={date}>
         <WeekDayLetter>{dayName.toLowerCase()}</WeekDayLetter>
-        <WeekDayDigit onClick={() => setSelectedDay(date)} isCurrentDay={date === day}>
+        <WeekDayDigit onClick={() => setSelectedDay(date)} isCurrentDay={date === activeDay}>
           {dayNum}
         </WeekDayDigit>
       </FlexData>
@@ -157,14 +154,14 @@ const CarouselDays = ({
 
 CarouselDays.propTypes = {
   className: string.isRequired,
-  setDay: func.isRequired,
-  day: string.isRequired,
+  changeDay: func.isRequired,
+  activeDay: string.isRequired,
   weekDays: arrayOf(object).isRequired,
 };
 
 const ConnectedCarouselDays = connect(
-  (state) => ({ day: getSelectedDay(state) }),
-  { setDay },
+  (state) => ({ activeDay: getActiveDay(state) }),
+  { changeDay },
 )(CarouselDays);
 
 const StyledCarouselDays = styled(ConnectedCarouselDays)`
@@ -179,5 +176,9 @@ const Carousel = ({ weekDays }) => (
     <StyledCarouselDays weekDays={weekDays} />
   </main>
 );
+
+Carousel.propTypes = {
+  weekDays: arrayOf(object).isRequired,
+};
 
 export default Carousel;

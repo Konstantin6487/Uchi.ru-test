@@ -6,7 +6,8 @@ import {
   getDefaultMiddleware,
 } from 'redux-starter-kit';
 import App from './components/App';
-import reducer, { addEvent } from './reducers';
+import reducer from './reducers';
+import { addEvent } from './actions';
 
 const store = configureStore({
   reducer,
