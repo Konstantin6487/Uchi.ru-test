@@ -1,35 +1,66 @@
 import React from 'react';
 import { string } from 'prop-types';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { isEmpty, throttle } from 'lodash';
+import { selectEventCellSelector, getActiveDay } from '../selectors';
+import { reset, removeEvent } from '../actions';
+import { formatDateToUsa } from '../helpers';
 
 const Button = styled.span`
   font-size: inherit;
   font-weight: lighter;
-  color: red;
+  color: ${({ isDisable }) => (!isDisable ? 'red' : '#ccc')};
   user-select: none;
-  cursor: pointer;
+  cursor: ${({ isDisable }) => (!isDisable && 'pointer')};
   &:hover {
-    color: #9555af;
+    color: ${({ isDisable }) => (!isDisable ? '#9555af' : '#ccc')};
   };
   &:active,
   &:focus {
-    transform: translateY(1px);
+    transform: ${({ isDisable }) => !isDisable && 'translateY(1px)'};
   };
 `;
 
-const Footer = ({ className }) => (
-  <div className={className}>
-    <Wrapper>
-      <Foo>
-        <Button>Today</Button>
-        <Button>Delete</Button>
-      </Foo>
-    </Wrapper>
-  </div>
-);
+const Footer = ({
+  className,
+  activeDay,
+  selectedCellEventData,
+  reset: resetToCurrentDay,
+  removeEvent: removeSelectedCellEvent,
+}) => {
+
+  const isScheduleOnCurrentDay = formatDateToUsa(new Date()) === activeDay;
+  const handleClickLeftBtn = throttle(() => {
+    resetToCurrentDay();
+  }, 100);
+
+  const handleClickRightBtn = throttle(() => {
+    removeSelectedCellEvent(selectedCellEventData);
+  }, 100);
+
+  return (
+    <div className={className}>
+      <Wrapper>
+        <FlexWrap>
+          <Button
+            isDisable={isScheduleOnCurrentDay}
+            left
+            onClick={!isScheduleOnCurrentDay && handleClickLeftBtn}>
+            Today
+          </Button>
+          {!isEmpty(selectedCellEventData) && (
+            <Button onClick={handleClickRightBtn}>Delete</Button>
+          )}
+        </FlexWrap>
+      </Wrapper>
+    </div>
+  );
+};
 
 Footer.propTypes = {
   className: string.isRequired,
+  activeDay: string.isRequired,
 };
 
 const Wrapper = styled.div`
@@ -37,7 +68,7 @@ const Wrapper = styled.div`
   margin: 0 auto;
 `;
 
-const Foo = styled.footer`
+const FlexWrap = styled.footer`
   display: flex;
   flex-basis: 100%;
   justify-content: space-between;
@@ -48,7 +79,14 @@ const Foo = styled.footer`
   padding-right: 50px;
 `;
 
-const StyledFooter = styled(Footer)`
+const ConnectedFooter = connect((state) => {
+  return ({
+    activeDay: getActiveDay(state),
+    selectedCellEventData: selectEventCellSelector(state),
+  });
+}, { reset, removeEvent })(Footer);
+
+const StyledFooter = styled(ConnectedFooter)`
   padding: 20px 0 20px 0;
   background: #f3f3f3;
 `;

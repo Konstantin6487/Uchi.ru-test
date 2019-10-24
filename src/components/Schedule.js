@@ -24,7 +24,7 @@ const Cell = styled.div`
 
 const CellInner = styled.div`
   background: ${({ hasEvent }) => hasEvent && 'lightgray'};
-  background: ${({ isSelected }) => isSelected && 'blue'};
+  background: ${({ isSelected, hasEvent }) => isSelected && hasEvent && 'blue'};
   flex-basis: 100%;
   &:hover {
     background: gray;
@@ -72,6 +72,8 @@ const Schedule = ({
       return (
         <Cell key={`${date}-${hour}`}>
           <CellInner
+            date={date}
+            hour={hour}
             onClick={!hasEvent
               ? addEventToDate({ date, hour })
               : selectCellWithEvent({ date, hour })}

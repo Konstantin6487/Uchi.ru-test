@@ -1,9 +1,11 @@
 import { createReducer } from 'redux-starter-kit';
 import { addDays } from 'date-fns';
+import { isEmpty } from 'lodash';
 import {
   changeNextDay,
   changePrevDay,
   changeDay,
+  reset,
   addEvent,
   removeEvent,
   selectEventCell,
@@ -31,6 +33,7 @@ const activeDay = createReducer(initialStateData.activeDay, {
     return normalized;
   },
   [changeDay]: (_, { payload }) => payload,
+  [reset]: () => initialStateData.activeDay,
 });
 
 const schedule = createReducer(initialStateData.schedule, {
@@ -43,7 +46,20 @@ const schedule = createReducer(initialStateData.schedule, {
       },
     },
   }),
-  [removeEvent]: (state) => state,
+  [removeEvent]: (state, { payload }) => {
+    if (isEmpty(payload)) {
+      return state;
+    }
+    return ({
+      listByDate: {
+        ...state.listByDate,
+        [payload.date]: {
+          ...state.listByDate[payload.date],
+          [payload.hour]: false,
+        },
+      },
+    });
+  },
 });
 
 const ui = createReducer(initialStateData.ui, {
