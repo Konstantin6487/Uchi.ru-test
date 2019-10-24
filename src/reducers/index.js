@@ -66,6 +66,7 @@ const ui = createReducer(initialStateData.ui, {
   [selectEventCell]: (_, { payload }) => ({ selectedCellEventData: payload }),
   [cancelSelectEventCell]: () => initialStateData.ui,
   [addEvent]: () => initialStateData.ui,
+  [removeEvent]: () => initialStateData.ui,
 });
 
 export default {

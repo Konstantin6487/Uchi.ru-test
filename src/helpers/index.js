@@ -1,4 +1,9 @@
-import { format, parse, startOfWeek, addDays } from 'date-fns';
+import {
+  format,
+  parse,
+  startOfWeek,
+  addDays,
+} from 'date-fns';
 
 export const defaultTimeZone = { timeZone: 'Europe/Moscow' };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { string } from 'prop-types';
+import { string, func, object } from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { isEmpty, throttle } from 'lodash';
@@ -29,7 +29,6 @@ const Footer = ({
   reset: resetToCurrentDay,
   removeEvent: removeSelectedCellEvent,
 }) => {
-
   const isScheduleOnCurrentDay = formatDateToUsa(new Date()) === activeDay;
   const handleClickLeftBtn = throttle(() => {
     resetToCurrentDay();
@@ -46,7 +45,8 @@ const Footer = ({
           <Button
             isDisable={isScheduleOnCurrentDay}
             left
-            onClick={!isScheduleOnCurrentDay && handleClickLeftBtn}>
+            onClick={!isScheduleOnCurrentDay ? handleClickLeftBtn : undefined}
+          >
             Today
           </Button>
           {!isEmpty(selectedCellEventData) && (
@@ -61,6 +61,9 @@ const Footer = ({
 Footer.propTypes = {
   className: string.isRequired,
   activeDay: string.isRequired,
+  selectedCellEventData: object,
+  removeEvent: func.isRequired,
+  reset: func.isRequired,
 };
 
 const Wrapper = styled.div`
@@ -79,12 +82,10 @@ const FlexWrap = styled.footer`
   padding-right: 50px;
 `;
 
-const ConnectedFooter = connect((state) => {
-  return ({
-    activeDay: getActiveDay(state),
-    selectedCellEventData: selectEventCellSelector(state),
-  });
-}, { reset, removeEvent })(Footer);
+const ConnectedFooter = connect((state) => ({
+  activeDay: getActiveDay(state),
+  selectedCellEventData: selectEventCellSelector(state),
+}), { reset, removeEvent })(Footer);
 
 const StyledFooter = styled(ConnectedFooter)`
   padding: 20px 0 20px 0;

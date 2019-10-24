@@ -23,11 +23,12 @@ const Cell = styled.div`
 `;
 
 const CellInner = styled.div`
-  background: ${({ hasEvent }) => hasEvent && 'lightgray'};
-  background: ${({ isSelected, hasEvent }) => isSelected && hasEvent && 'blue'};
+  background: ${({ hasEvent }) => hasEvent && 'gray'};
+  background: ${({ isSelected, hasEvent }) => isSelected && hasEvent && '#ADD8E6'};
   flex-basis: 100%;
   &:hover {
-    background: gray;
+    cursor: ${({ isSelected, hasEvent }) => (!isSelected || !hasEvent) && 'pointer'};
+    background: ${({ isSelected, hasEvent }) => !isSelected && !hasEvent && 'lightgray'};
   };
 `;
 
@@ -35,12 +36,19 @@ const CellEmpty = styled(Cell)`
   border: none;
   align-items: flex-end;
   justify-content: right;
+  position: relative;
 `;
 
 const Row = styled.div`
   display: flex;
   flex-basis: 100%;
   justify-content: space-around;
+`;
+
+const HourMark = styled.span`
+  position: absolute;
+  right: 5%;
+  top: 82%;
 `;
 
 const Wrapper = styled.div`
@@ -51,34 +59,43 @@ const Wrapper = styled.div`
 const Schedule = ({
   className,
   weekDays,
-  addEvent,
-  selectEventCell,
-  selectedCellEventData,
+  addEvent: add,
+  selectEventCell: selectCell,
+  selectedCellEventData: selectedEventData,
   listByDate,
 }) => {
   const dayHoursList = Array.from({ length: 24 }, (_, i) => (i < 10 ? `0${i}:00` : `${i}:00`));
 
   const hasEventOnDate = (date, hour) => !!get(listByDate, [`${date}`, `${hour}`]);
   const isSelectedCell = ({ date: cellDate, hour: cellHour }) => {
-    const { date: eventDate, hour: eventHour } = selectedCellEventData;
+    const { date: eventDate, hour: eventHour } = selectedEventData;
     return eventDate === cellDate && eventHour === cellHour;
   };
-  const addEventToDate = (data) => () => addEvent(data);
-  const selectCellWithEvent = (eventData) => () => selectEventCell(eventData);
+  const addEventToDate = (data) => () => add(data);
+  const selectCellWithEvent = (eventData) => () => selectCell(eventData);
 
   const renderWeekScheduleRow = (hour) => (
     weekDays.map(({ date }) => {
       const hasEvent = hasEventOnDate(date, hour);
+      const isSelected = isSelectedCell({ date, hour });
+
+      const handleCellClick = () => {
+        if (hasEvent && isSelected) {
+          return undefined;
+        }
+        return !hasEvent
+          ? addEventToDate({ date, hour })
+          : selectCellWithEvent({ date, hour });
+      };
+
       return (
         <Cell key={`${date}-${hour}`}>
           <CellInner
             date={date}
             hour={hour}
-            onClick={!hasEvent
-              ? addEventToDate({ date, hour })
-              : selectCellWithEvent({ date, hour })}
+            onClick={handleCellClick()}
             hasEvent={hasEvent}
-            isSelected={isSelectedCell({ date, hour })}
+            isSelected={isSelected}
           />
         </Cell>
       );
@@ -88,7 +105,9 @@ const Schedule = ({
   const renderWeekScheduleColumn = () => (
     dayHoursList.map((hour, i) => (
       <Row key={hour}>
-        <CellEmpty>{hour}</CellEmpty>
+        <CellEmpty>
+          <HourMark>{hour}</HourMark>
+        </CellEmpty>
         {renderWeekScheduleRow(i)}
       </Row>
     ))
@@ -106,8 +125,10 @@ const Schedule = ({
 Schedule.propTypes = {
   className: string.isRequired,
   weekDays: arrayOf(object).isRequired,
-  addEvent: func.isRequired,
-  selectEventCell: func.isRequired,
+  addEvent: func,
+  selectEventCell: func,
+  listByDate: object,
+  selectedCellEventData: object,
 };
 
 const ConnectedShedule = connect((state) => ({

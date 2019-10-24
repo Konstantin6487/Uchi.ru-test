@@ -28,15 +28,21 @@ const WeekDayLetter = styled.div`
 `;
 
 const WeekDayDigit = styled.div`
-  cursor: pointer;
   user-select: none;
   padding: 5px;
+  width: 30px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: ${({ isCurrentDay }) => !isCurrentDay && 'pointer'};
   background: ${({ isCurrentDay }) => isCurrentDay && 'red'};
   color: ${({ isCurrentDay }) => isCurrentDay && '#fff'};
-  border-radius: ${({ isCurrentDay }) => isCurrentDay && '50%'};
   &:active,
   &:focus {
-    transform: translateY(1px);
+    transform: ${({ isCurrentDay }) => !isCurrentDay && 'translateY(1px)'};
+  };
+  &:hover {
+    background: ${({ isCurrentDay }) => !isCurrentDay && '#9555af'};
+    color: #fff;
   };
 `;
 
@@ -74,7 +80,7 @@ const DateCarousel = ({
 
 DateCarousel.propTypes = {
   className: string.isRequired,
-  changeNextDay: func.isRequired,
+  changeNextDay: func,
   changePrevDay: func.isRequired,
   activeDay: string.isRequired,
 };
