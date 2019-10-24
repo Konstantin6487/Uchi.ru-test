@@ -14,7 +14,7 @@ import {
 } from 'date-fns';
 import { throttle } from 'lodash';
 import styled from 'styled-components';
-import { addDay, removeDay, setDay } from './reducers';
+import { addDay, removeDay, setDay } from '../reducers';
 
 const WeekDaysWrapper = styled.div`
   display: flex;
@@ -125,7 +125,6 @@ const CarouselDays = ({
   day,
   weekDays,
 }) => {
-
   const renderWeekDays = () => (
     weekDays.map(({ date, dayName, dayNum }) => (
       <FlexData key={date}>

@@ -2,7 +2,7 @@ import React from 'react';
 import { string } from 'prop-types';
 
 import styled from 'styled-components';
-import GlobalStyle from './theme/globalStyle';
+import GlobalStyle from '../theme/globalStyle';
 import Header from './Header';
 import Carousel from './Carousel';
 import Schedule from './Schedule';
