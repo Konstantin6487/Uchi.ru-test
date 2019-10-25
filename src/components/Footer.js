@@ -84,8 +84,13 @@ const ConnectedFooter = connect((state) => ({
 }), { reset, removeEvent })(Footer);
 
 const StyledFooter = styled(ConnectedFooter)`
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   padding: 20px 0 20px 0;
   background: #f3f3f3;
+  box-shadow: 0 -2px 5px -5px #333;
 `;
 
 export default StyledFooter;

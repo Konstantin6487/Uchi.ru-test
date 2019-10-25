@@ -134,7 +134,7 @@ const ConnectedShedule = connect((state) => ({
 
 const StyledSchedule = styled(ConnectedShedule)`
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 100px;
 `;
 
 export default StyledSchedule;
