@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "butter-toast": "^3.3.3",
     "date-fns": "^2.6.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
