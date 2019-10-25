@@ -7,7 +7,7 @@ import { isEmpty, throttle } from 'lodash';
 import Wrapper from './Wrapper';
 import { selectEventCellSelector, getActiveDay } from '../selectors';
 import { reset, removeEvent } from '../actions';
-import { formatDateToUsa, formatHourToPretty } from '../helpers';
+import { formatDateToUsa, formatDateToToastContent } from '../helpers';
 
 const Button = styled.span`
   font-size: inherit;
@@ -49,7 +49,7 @@ const Footer = ({
     ButterToast.raise({
       content: <Cinnamon.Crisp
         scheme={Cinnamon.Crisp.SCHEME_BLUE}
-        content={() => <div>{`on date ${date} at ${formatHourToPretty(hour)}`}</div>}
+        content={() => <div>{formatDateToToastContent(date, hour)}</div>}
         title="Event was removed!"
       />,
     });

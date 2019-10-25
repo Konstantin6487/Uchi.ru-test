@@ -12,7 +12,7 @@ import { get } from 'lodash';
 import Wrapper from './Wrapper';
 import { addEvent, selectEventCell } from '../actions';
 import { listByDateSelector, selectEventCellSelector } from '../selectors';
-import { formatHourToPretty } from '../helpers';
+import { formatHourToPretty, formatDateToToastContent } from '../helpers';
 
 const Cell = styled.div`
   width: 15%;
@@ -75,7 +75,7 @@ const Schedule = ({
     ButterToast.raise({
       content: <Cinnamon.Crisp
         scheme={Cinnamon.Crisp.SCHEME_BLUE}
-        content={() => <div>{`on date ${date} at ${formatHourToPretty(hour)}`}</div>}
+        content={() => <div>{formatDateToToastContent(date, hour)}</div>}
         title="New event!"
       />,
     });

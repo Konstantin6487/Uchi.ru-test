@@ -10,7 +10,7 @@ import {
   formatDateToHour,
   formatDateToUsa,
   parseDateFromPrompt,
-  formatHourToPretty,
+  formatDateToToastContent,
 } from '../helpers';
 import Wrapper from './Wrapper';
 
@@ -64,7 +64,7 @@ const Header = ({ className, addEvent: add }) => {
     ButterToast.raise({
       content: <Cinnamon.Crisp
         scheme={Cinnamon.Crisp.SCHEME_BLUE}
-        content={() => <div>{`on date ${date} at ${formatHourToPretty(hour)}`}</div>}
+        content={() => <div>{formatDateToToastContent(date, hour)}</div>}
         title="New event!"
       />,
     });
