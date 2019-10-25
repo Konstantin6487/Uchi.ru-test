@@ -5,15 +5,17 @@ import {
   configureStore,
   getDefaultMiddleware,
 } from 'redux-starter-kit';
+import { save, load } from 'redux-localstorage-simple';
 import App from './components/App';
 import reducer from './reducers';
 
 const store = configureStore({
   reducer,
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: getDefaultMiddleware({
+  middleware: [...getDefaultMiddleware({
     serializableCheck: false,
-  }),
+  }), save()],
+  preloadedState: load(),
 });
 
 render(
