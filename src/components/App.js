@@ -42,7 +42,6 @@ const ConnectedApp = connect((state) => {
 const StyledApp = styled(ConnectedApp)`
   margin: 0 auto;
   padding: 0;
-
   @media (max-width: 739.98px) {
     width: 740px;
   }

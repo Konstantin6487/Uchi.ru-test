@@ -8,7 +8,6 @@ import {
 import App from '../components/App';
 import reducer from '../reducers';
 
-
 it('renders without crashing', () => {
   const store = configureStore({
     reducer,

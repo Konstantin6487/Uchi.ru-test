@@ -11,11 +11,12 @@ export const formatDateToUsa = (date) => format(date, 'M-d-yyyy', defaultTimeZon
 export const formatDateForPromptPlaceholder = (date) => format(date, 'yyyy-M-d HH');
 export const formatDatePretty = (date) => format(date, 'EEEE d MMMM yyyy', defaultTimeZone);
 export const formatDateToHour = (date) => format(date, 'H');
+export const getDayDigit = (date) => format(date, 'd', defaultTimeZone);
+export const getDayName = (date) => format(date, 'EEEEE', defaultTimeZone);
+
 export const parseDateFromUsa = (date) => parse(date, 'M-d-yyyy', new Date());
 export const parseDateFromPrompt = (date) => parse(date, 'yyyy-M-d HH', new Date());
 
-export const getDayDigit = (date) => format(date, 'd', defaultTimeZone);
-export const getDayName = (date) => format(date, 'EEEEE', defaultTimeZone);
 export const getStartOfWeek = (date) => startOfWeek(date, { weekStartsOn: 1 });
 
 export const getWeekDaysData = (weekStart) => Array
