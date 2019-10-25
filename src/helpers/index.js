@@ -8,8 +8,11 @@ import {
 export const defaultTimeZone = { timeZone: 'Europe/Moscow' };
 
 export const formatDateToUsa = (date) => format(date, 'M-d-yyyy', defaultTimeZone);
+export const formatDateForPromptPlaceholder = (date) => format(date, 'yyyy-M-d HH');
 export const formatDatePretty = (date) => format(date, 'EEEE d MMMM yyyy', defaultTimeZone);
+export const formatDateToHour = (date) => format(date, 'H');
 export const parseDateFromUsa = (date) => parse(date, 'M-d-yyyy', new Date());
+export const parseDateFromPrompt = (date) => parse(date, 'yyyy-M-d HH', new Date());
 
 export const getDayDigit = (date) => format(date, 'd', defaultTimeZone);
 export const getDayName = (date) => format(date, 'EEEEE', defaultTimeZone);
@@ -22,3 +25,5 @@ export const getWeekDaysData = (weekStart) => Array
     dayNum: getDayDigit(day),
     dayName: getDayName(day),
   }));
+
+export const formatHourToPretty = (h) => `${h} ${Number(h) < 12 ? 'a.m.' : 'p.m.'}`;
