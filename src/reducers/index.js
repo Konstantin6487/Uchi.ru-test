@@ -1,6 +1,6 @@
 import { createReducer } from 'redux-starter-kit';
 import { addDays } from 'date-fns';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty, omit, isEqual } from 'lodash';
 import {
   changeNextDay,
   changePrevDay,
@@ -70,7 +70,10 @@ const schedule = createReducer(initialStateData.schedule, {
 });
 
 const ui = createReducer(initialStateData.ui, {
-  [selectEventCell]: (_, { payload }) => ({ selectedCellEventData: payload }),
+  [selectEventCell]: (state, { payload }) => (
+    isEqual(state.selectedCellEventData, payload)
+      ? initialStateData.ui
+      : ({ selectedCellEventData: payload })),
   [cancelSelectEventCell]: () => initialStateData.ui,
   [addEvent]: () => initialStateData.ui,
   [removeEvent]: () => initialStateData.ui,

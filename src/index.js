@@ -8,14 +8,17 @@ import {
 import { save, load } from 'redux-localstorage-simple';
 import App from './components/App';
 import reducer from './reducers';
+import { reducerSchedule, reducerActiveDay } from './actions';
+
+const preloadStates = [reducerActiveDay, reducerSchedule];
 
 const store = configureStore({
   reducer,
   devTools: process.env.NODE_ENV !== 'production',
   middleware: [...getDefaultMiddleware({
     serializableCheck: false,
-  }), save()],
-  preloadedState: load(),
+  }), save({ states: preloadStates })],
+  preloadedState: load({ states: preloadStates }),
 });
 
 render(

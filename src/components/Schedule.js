@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import ButterToast, { Cinnamon, POS_TOP, POS_CENTER } from 'butter-toast';
 import styled from 'styled-components';
 import {
   string,
@@ -11,6 +12,7 @@ import { get } from 'lodash';
 import Wrapper from './Wrapper';
 import { addEvent, selectEventCell } from '../actions';
 import { listByDateSelector, selectEventCellSelector } from '../selectors';
+import { formatHourToPretty } from '../helpers';
 
 const Cell = styled.div`
   width: 15%;
@@ -67,7 +69,17 @@ const Schedule = ({
     const { date: eventDate, hour: eventHour } = selectedEventData;
     return eventDate === cellDate && eventHour === cellHour;
   };
-  const addEventToDate = (data) => () => add(data);
+  const addEventToDate = (data) => () => {
+    add(data);
+    const { date, hour } = data;
+    ButterToast.raise({
+      content: <Cinnamon.Crisp
+        scheme={Cinnamon.Crisp.SCHEME_BLUE}
+        content={() => <div>{`on date ${date} at ${formatHourToPretty(hour)}`}</div>}
+        title="New event!"
+      />,
+    });
+  };
   const selectCellWithEvent = (eventData) => () => selectCell(eventData);
 
   const renderWeekScheduleRow = (hour) => (
@@ -76,9 +88,9 @@ const Schedule = ({
       const isSelected = isSelectedCell({ date, hour });
 
       const handleCellClick = () => {
-        if (hasEvent && isSelected) {
-          return undefined;
-        }
+        // if (hasEvent && isSelected) {
+        //   return undefined;
+        // }
         return !hasEvent
           ? addEventToDate({ date, hour })
           : selectCellWithEvent({ date, hour });
@@ -113,6 +125,7 @@ const Schedule = ({
     <section className={className}>
       <Wrapper>
         {renderWeekScheduleColumn()}
+        <ButterToast position={{ vertical: POS_TOP, horizontal: POS_CENTER }} />
       </Wrapper>
     </section>
   );

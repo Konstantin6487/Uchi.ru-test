@@ -2,11 +2,12 @@ import React from 'react';
 import { string, func, object } from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import ButterToast, { Cinnamon, POS_TOP, POS_CENTER } from 'butter-toast';
 import { isEmpty, throttle } from 'lodash';
 import Wrapper from './Wrapper';
 import { selectEventCellSelector, getActiveDay } from '../selectors';
 import { reset, removeEvent } from '../actions';
-import { formatDateToUsa } from '../helpers';
+import { formatDateToUsa, formatHourToPretty } from '../helpers';
 
 const Button = styled.span`
   font-size: inherit;
@@ -36,7 +37,15 @@ const Footer = ({
   }, 100);
 
   const handleClickRightBtn = throttle(() => {
+    const { date, hour } = selectedCellEventData;
     removeSelectedCellEvent(selectedCellEventData);
+    ButterToast.raise({
+      content: <Cinnamon.Crisp
+        scheme={Cinnamon.Crisp.SCHEME_BLUE}
+        content={() => <div>{`on date ${date} at ${formatHourToPretty(hour)}`}</div>}
+        title="Event was removed!"
+      />,
+    });
   }, 100);
 
   return (
@@ -54,6 +63,7 @@ const Footer = ({
             <Button onClick={handleClickRightBtn}>Delete</Button>
           )}
         </FlexWrap>
+        <ButterToast position={{ vertical: POS_TOP, horizontal: POS_CENTER }} />
       </Wrapper>
     </div>
   );
