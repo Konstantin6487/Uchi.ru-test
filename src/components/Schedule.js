@@ -64,7 +64,7 @@ const Schedule = ({
 }) => {
   const dayHoursList = Array.from({ length: 24 }, (_, i) => (i < 10 ? `0${i}:00` : `${i}:00`));
 
-  const hasEventOnDate = (date, hour) => !!get(listByDate, [`${date}`, `${hour}`]);
+  const hasEventOnDate = ({ date, hour }) => !!get(listByDate, [`${date}`, `${hour}`]);
   const isSelectedCell = ({ date: cellDate, hour: cellHour }) => {
     const { date: eventDate, hour: eventHour } = selectedEventData;
     return eventDate === cellDate && eventHour === cellHour;
@@ -84,23 +84,24 @@ const Schedule = ({
 
   const renderWeekScheduleRow = (hour) => (
     weekDays.map(({ date }) => {
-      const hasEvent = hasEventOnDate(date, hour);
-      const isSelected = isSelectedCell({ date, hour });
+      const currentEventData = { date, hour };
+      const hasEvent = hasEventOnDate(currentEventData);
+      const isSelected = isSelectedCell(currentEventData);
 
-      const handleCellClick = () => {
-        // if (hasEvent && isSelected) {
-        //   return undefined;
-        // }
-        return !hasEvent
-          ? addEventToDate({ date, hour })
-          : selectCellWithEvent({ date, hour });
-      };
+      const handleCellClick = () => (
+        !hasEvent
+          ? addEventToDate(currentEventData)
+          : selectCellWithEvent(currentEventData)
+      );
+
+      const title = `${date}, ${formatHourToPretty(hour)}`;
 
       return (
         <Cell key={`${date}-${hour}`}>
           <CellInner
             date={date}
             hour={hour}
+            title={title}
             onClick={handleCellClick()}
             hasEvent={hasEvent}
             isSelected={isSelected}

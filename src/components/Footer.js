@@ -34,6 +34,13 @@ const Footer = ({
   const isScheduleOnCurrentDay = formatDateToUsa(new Date()) === activeDay;
   const handleClickLeftBtn = throttle(() => {
     resetToCurrentDay();
+    ButterToast.raise({
+      content: <Cinnamon.Crisp
+        scheme={Cinnamon.Crisp.SCHEME_BLUE}
+        content={() => <div>{`on date ${activeDay}`}</div>}
+        title="You are on current day!"
+      />,
+    });
   }, 100);
 
   const handleClickRightBtn = throttle(() => {
