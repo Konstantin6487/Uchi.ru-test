@@ -16,4 +16,4 @@ lint:
 test:
 	npm test
 
-.PHONY: test
+.PHONY: test build
